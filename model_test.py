@@ -27,7 +27,7 @@ if 'device' not in globals():
 print(f'Using {device}')
 
 
-model = Transformer(dim_model=512, num_heads=8, max_len=512 , ffn_hidden=8, num_layers=6, enc_voca_size=52000, dec_voca_size=52000, device=device)
+model = Transformer(dim_model=512, num_heads=8, max_len=512 , ffn_hidden=8, num_layers=6, enc_voca_size=52000, dec_voca_size=52000).cuda()
 print(model)
 
 # train
@@ -86,10 +86,8 @@ test_dataset = iwsltDataset(en_test_sentences, de_test_sentences)
 print(train_dataset.__len__())    # 206112
 
 ## DataLoader       # automatically handle batching and shuffling
-train_dataloader = DataLoader(train_dataset, batch_size=64,shuffle=True, collate_fn=train_dataset.collate_fn) # get_item에서 padding을 했기에 collate_function 없어도 됨
-valid_dataloader = DataLoader(valid_dataset, batch_size=64)
+train_dataloader = DataLoader(train_dataset, batch_size=64,shuffle=True, collate_fn=train_dataset.collate_fn)
 test_dataloader = DataLoader(test_dataset, batch_size=64)
-
 
 
 
@@ -109,7 +107,7 @@ for i in progress:
     for data in train_dataloader:
         optimizer.zero_grad()
 
-        result = model(data['pdd_src'].float(), data['pdd_trg'].float())    #.cuda() 삭제
+        result = model(data['pdd_src'].cuda(), data['pdd_trg'].cuda())   #.float()삭제
         loss = criterion(result(1,0,2), data['pdd_trg'].float().cuda())
         
         loss.backward()

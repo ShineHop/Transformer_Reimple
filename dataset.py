@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset, DataLoader
 import torch
-from tokenizers.implementations import ByteLevelBPETokenizer
+#from tokenizers.implementations import ByteLevelBPETokenizer
 from bpe_postprocessing import en_tokenizer, de_tokenizer   
 
 
@@ -37,9 +37,9 @@ class iwsltDataset(Dataset):
 
     
     def collate_fn(self, samples):  # data의 길이가 다른 경우 필요
-        # 
-        src_inputs = [torch.tensor(sample['src_input']) for sample in samples] 
+        src_inputs = [torch.tensor(sample['src_input']) for sample in samples] # device='cuda' 추가함 23.11.09
         trg_inputs = [torch.tensor(sample['trg_input']) for sample in samples]
+
 
         pdd_src = torch.nn.utils.rnn.pad_sequence(src_inputs, batch_first=True, padding_value=1)
         pdd_trg = torch.nn.utils.rnn.pad_sequence(trg_inputs, batch_first=True, padding_value=1)
@@ -49,8 +49,9 @@ class iwsltDataset(Dataset):
 
         return batch
     
+
         
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     en_file = './transformer/Dataset/en_corpus_train.txt'  
     de_file = './transformer/Dataset/de_corpus_train.txt'
 
@@ -71,11 +72,11 @@ if __name__ == "__main__":
     print(train_dataset.__getitem__(0))
 
     ## DataLoader       # automatically handle batching and shuffling
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=train_dataset.collate_fn) # batch=64
-
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=train_dataset.collate_fn) # batch=64
+    
 
     # 데이터 순회하기
     for data in train_loader:
         print("Data: ", data) 
-        break
+        break """
     
